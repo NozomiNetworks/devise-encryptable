@@ -10,7 +10,7 @@ begin
 
           def self.digest(password, stretches, salt, pepper)
             hash = OpenSSL::Digest::SHA512.new
-            OpenSSL::KDF.pbkdf2_hmac(
+            OpenSSL::PKCS5.pbkdf2_hmac(
               password,
               salt: "#{[salt].pack('H*')}#{pepper}",
               iterations: stretches > 1000 ? stretches : 100_000,
