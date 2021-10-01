@@ -9,6 +9,20 @@ class Encryptors < ActiveSupport::TestCase
     assert_equal authlogic, encryptor
   end
 
+  test 'should match a password created by pbkdf2' do
+    pbkdf2 = "9d9274895609f1ad7f076dd66b97912c2308deb34355d0678ce1100c61b1a31b95210ed15e11a7455fe64c59b8f8610e34ee1ebfd2eb968a883746fc37458a96"
+    encryptor = Devise::Encryptable::Encryptors::Pbkdf2.digest('123mudar', 100_000, 'usZK_z_EAaF61Gwkw-ed', '')
+    assert_equal pbkdf2, encryptor
+  end
+
+  test 'pbkdf2 doesnt allow low stretches' do
+    encryptor_low = Devise::Encryptable::Encryptors::Pbkdf2.digest('123mudar', 20, 'usZK_z_EAaF61Gwkw-ed', '')
+    encryptor = Devise::Encryptable::Encryptors::Pbkdf2.digest('123mudar', 100_000, 'usZK_z_EAaF61Gwkw-ed', '')
+    encryptor_high = Devise::Encryptable::Encryptors::Pbkdf2.digest('123mudar', 120_000, 'usZK_z_EAaF61Gwkw-ed', '')
+    assert_equal encryptor_low, encryptor
+    refute_equal encryptor_high, encryptor
+  end
+
   test 'should match a password created by restful_authentication' do
     restful_authentication = "93110f71309ce91366375ea44e2a6f5cc73fa8d4"
     encryptor = Devise::Encryptable::Encryptors::RestfulAuthenticationSha1.digest('123mudar', 10, '48901d2b247a54088acb7f8ea3e695e50fe6791b', 'fee9a51ec0a28d11be380ca6dee6b4b760c1a3bf')
