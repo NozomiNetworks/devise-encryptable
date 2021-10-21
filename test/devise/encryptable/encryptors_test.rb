@@ -15,6 +15,9 @@ class Encryptors < ActiveSupport::TestCase
     assert_equal pbkdf2, encryptor
   end
 
+  test 'should not rais exception when comparing strings with different lengths' do
+    refute Devise::Encryptable::Encryptors::Pbkdf2.compare('s1', 's2long', 10, 'salt', 'pepper')
+  end
   test 'pbkdf2 doesnt allow low stretches' do
     encryptor_low = Devise::Encryptable::Encryptors::Pbkdf2.digest('123mudar', 20, 'usZK_z_EAaF61Gwkw-ed', '')
     encryptor = Devise::Encryptable::Encryptors::Pbkdf2.digest('123mudar', 100_000, 'usZK_z_EAaF61Gwkw-ed', '')

@@ -7,7 +7,11 @@ begin
         class Pbkdf2 < Base
           def self.compare(encrypted_password, password, stretches, salt, pepper)
             value_to_test = digest(password, stretches, salt, pepper)
-            ActiveSupport::SecurityUtils.fixed_length_secure_compare(encrypted_password, value_to_test)
+            begin
+              ActiveSupport::SecurityUtils.fixed_length_secure_compare(encrypted_password, value_to_test)
+            rescue ArgumentError
+              false
+            end
           end
 
           def self.digest(password, stretches, salt, pepper)
